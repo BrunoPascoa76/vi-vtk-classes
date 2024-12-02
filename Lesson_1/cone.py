@@ -25,37 +25,54 @@ from vtkmodules.all import *
 #     vtkRenderer
 # )
 
+def add_light(ren, color, position,sphereSource):
+    cam=ren.GetActiveCamera()
+    light = vtkLight()
+    light.SetColor(color)
+    light.SetFocalPoint(cam.GetFocalPoint())
+    light.SetPosition(position)
+    ren.AddLight(light)
+
+    sphereMapper=vtkPolyDataMapper()
+    sphereMapper.SetInputConnection( sphereSource.GetOutputPort() )
+    sphereActor=vtkActor()
+    sphereActor.SetMapper(sphereMapper)
+    sphereActor.SetPosition(position)
+    sphereActor.GetProperty().SetColor(color)
+    sphereActor.GetProperty().LightingOff()
+    ren.AddActor(sphereActor)
+
+
 def main():
 
     # We Create an instance of vtkConeSource and set some of its
     # properties. The instance of vtkConeSource "cone" is part of a
     # visualization pipeline (it is a source process object); it produces data
     # (output type is vtkPolyData) which other filters may process.
-    
-    coneSource = vtkConeSource()
-    
-    # We create an instance of vtkPolyDataMapper to map the polygonal data
-    # into graphics primitives. We connect the output of the cone source 
-    # to the input of this mapper.
-  
-    coneMapper = vtkPolyDataMapper()
-    coneMapper.SetInputConnection( coneSource.GetOutputPort() )
 
-    # We create an actor to represent the cone. The actor orchestrates rendering
+    cylinderSource=vtkConeSource(height=3,radius=2,resolution=10)
+    sphereSource = vtkSphereSource()
+    sphereSource.SetThetaResolution(10)
+    sphereSource.SetPhiResolution(10)
+
+    cylinderMapper=vtkPolyDataMapper()
+    cylinderMapper.SetInputConnection(cylinderSource.GetOutputPort())
+
+    # We create an actor to represent the sphere. The actor orchestrates rendering
     # of the mapper's graphics primitives. An actor also refers to properties
     # via a vtkProperty instance, and includes an internal transformation
-    # matrix. We set this actor's mapper to be coneMapper which we created
+    # matrix. We set this actor's mapper to be sphereMapper which we created
     # above.
-  
-    coneActor = vtkActor()
-    coneActor.SetMapper(coneMapper)
+    
+    cylinderActor=vtkActor()
+    cylinderActor.SetMapper(cylinderMapper)
 
     # Create the Renderer and assign actors to it. A renderer is like a
     # viewport. It is part or all of a window on the screen and it is
     # responsible for drawing the actors it has.  We also set the background
     # color here.
     ren = vtkRenderer()
-    ren.AddActor( coneActor )
+    ren.AddActor( cylinderActor )
     
     # Finally we create the render window which will show up on the screen.
     # We put our renderer into the render window using AddRenderer. We also
@@ -63,17 +80,26 @@ def main():
     
     renWin = vtkRenderWindow()
     renWin.AddRenderer(ren)
+    renWin.SetSize(300,300)
 
-    renWin.SetWindowName('Cone')
+    cam=ren.GetActiveCamera()
+    cam.SetPosition(0,25,0)
+    cam.SetFocalPoint(0,0,0)
+    cam.SetViewUp(0,0,-1)
 
+    renWin.SetWindowName('sphere')
+
+    add_light(ren, (1,0,0),(-5,0,0),sphereSource)
+    add_light(ren, (0,0,1),(0,0,-5),sphereSource)
+    add_light(ren, (0,1,0),(5,0,0),sphereSource)
+    add_light(ren, (1,1,0),(0,0,5),sphereSource)
     
-    # Now we loop over 360 degrees and render the cone each time.
-    for i in range(0,360):
-        # render the image
-        renWin.Render()
-        # rotate the active camera by one degree
-        ren.GetActiveCamera().Azimuth(1)
+    iren = vtkRenderWindowInteractor()
+    iren.SetRenderWindow(renWin)
+    iren.Initialize()
+    iren.Start()
 
+    print(renWin.GetSize())
 
 if __name__ == '__main__':
     main()
