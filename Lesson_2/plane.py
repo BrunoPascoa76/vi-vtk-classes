@@ -33,7 +33,10 @@ def main():
     texture.SetInputConnection(reader.GetOutputPort())
 
     planeSource = vtkPlaneSource()
-   
+    planeSource.SetOrigin(0,0,0)
+    planeSource.SetPoint1(1,0,0)
+    planeSource.SetPoint2(0,1,0)
+
     planeMapper = vtkPolyDataMapper()
     planeMapper.SetInputConnection( planeSource.GetOutputPort() )
     
