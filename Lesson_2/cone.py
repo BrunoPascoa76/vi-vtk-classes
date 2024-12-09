@@ -25,40 +25,49 @@ from vtkmodules.all import *
 
 def main():
     
-    coneSource = vtkConeSource()
+    sphereSource = vtkSphereSource()
+    sphereSource.SetThetaResolution(10)
+    sphereSource.SetPhiResolution(10)
 
   
-    coneMapper = vtkPolyDataMapper()
-    coneMapper.SetInputConnection( coneSource.GetOutputPort() )
+    sphereMapper = vtkPolyDataMapper()
+    sphereMapper.SetInputConnection( sphereSource.GetOutputPort() )
+    
+    sphereMapper2 = vtkPolyDataMapper()
+    sphereMapper2.SetInputConnection( sphereSource.GetOutputPort() )
 
-    coneActor = vtkActor()
-    coneActor.SetMapper(coneMapper)
+    sphereActor = vtkActor()
+    sphereActor.SetMapper(sphereMapper)
 
-    coneActor.GetProperty().SetColor(0.2, 0.63, 0.79)
-    coneActor.GetProperty().SetDiffuse(0.7)
-    coneActor.GetProperty().SetSpecular(0.4)
-    coneActor.GetProperty().SetSpecularPower(20)
-    coneActor.GetProperty().SetOpacity(0.5)
+    
+    sphereActor.GetProperty().SetColor(0.2, 0.63, 0.79)
+    sphereActor.GetProperty().SetDiffuse(0.7)
+    sphereActor.GetProperty().SetSpecular(0.4)
+    sphereActor.GetProperty().SetSpecularPower(20)
+    #sphereActor.GetProperty().SetOpacity(0.5)
+    sphereActor.GetProperty().SetInterpolationToGouraud()
+
 
     property = vtkProperty()
     property.SetColor(1.0, 0.3882, 0.2784)
-    property.SetOpacity(0.5)
+    #property.SetOpacity(0.5)
     property.SetDiffuse(0.7)
     property.SetSpecular(0.4)
     property.SetSpecularPower(20)
+    property.SetInterpolationToPhong()
 
-    coneActor2 = vtkActor()
-    coneActor2.SetMapper(coneMapper)
-    coneActor2.SetPosition(-2, 0, 0)
-    coneActor2.SetProperty(property)
+    sphereActor2 = vtkActor()
+    sphereActor2.SetMapper(sphereMapper2)
+    sphereActor2.SetPosition(-2, 0, 0)
+    sphereActor2.SetProperty(property)
     
     ren = vtkRenderer()
-    ren.AddActor( coneActor )
+    ren.AddActor( sphereActor )
     ren.SetBackground( 0.1, 0.2, 0.4 )
     ren.SetViewport(0,0,0.5,1)
 
     ren2=vtkRenderer()
-    ren2.AddActor(coneActor2)
+    ren2.AddActor(sphereActor2)
     ren2.SetViewport(0.5,0,1,1)
     ren2.SetBackground( 0.2, 0.3, 0.4 ) 
 
@@ -75,8 +84,8 @@ def main():
 
     for _ in range(0,360):
         renWin.Render()
-        coneActor.RotateY(1)
-        coneActor2.RotateY(1)
+        sphereActor.RotateY(1)
+        sphereActor2.RotateY(1)
 
 
 if __name__ == '__main__':
