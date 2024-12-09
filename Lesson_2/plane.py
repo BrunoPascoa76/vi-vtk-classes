@@ -23,9 +23,14 @@ from vtkmodules.all import *
 #     vtkRenderer
 # )
 
-def make_plane(source,renderer,translation,texture_location):
+def make_plane(source,renderer,translation,rotation,texture_location):
     transform=vtkTransform()
     transform.Translate(translation)
+
+    transform.RotateX(rotation[0])
+    transform.RotateY(rotation[1])
+    transform.RotateZ(rotation[2])
+
     transformFilter=vtkTransformPolyDataFilter()
     transformFilter.SetInputConnection(source.GetOutputPort())
     transformFilter.SetTransform(transform)
@@ -50,7 +55,13 @@ def main():
     ren=vtkRenderer()
     ren.SetBackground(1.0, 0.55, 0.41)
 
-    make_plane(planeSource,ren,(0,0,0),"./Lesson_2/images/Im1.jpg")
+    make_plane(planeSource,ren,(0,0,0),(0,0,0),"./Lesson_2/images/Im1.jpg")
+    make_plane(planeSource,ren,(0,0,1),(0,0,90),"./Lesson_2/images/Im2.jpg")
+    make_plane(planeSource,ren,(0.5,0,0.5),(0,90,0),"./Lesson_2/images/Im3.jpg")
+    make_plane(planeSource,ren,(-0.5,0,0.5),(0,90,0),"./Lesson_2/images/Im4.jpg")
+    make_plane(planeSource,ren,(0,0.5,0.5),(90,0,0),"./Lesson_2/images/Im5.jpg")
+    make_plane(planeSource,ren,(0,-0.5,0.5),(90,0,0),"./Lesson_2/images/Im6.jpg")
+
    
     renWin = vtkRenderWindow()
     renWin.AddRenderer(ren)
