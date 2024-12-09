@@ -34,8 +34,8 @@ def main():
 
     planeSource = vtkPlaneSource()
     planeSource.SetOrigin(0,0,0)
-    planeSource.SetPoint1(1,0,0)
-    planeSource.SetPoint2(0,1,0)
+    planeSource.SetPoint1(2,0,0) #bottom right corner
+    planeSource.SetPoint2(0,1,0) #top left corner
 
     planeMapper = vtkPolyDataMapper()
     planeMapper.SetInputConnection( planeSource.GetOutputPort() )
