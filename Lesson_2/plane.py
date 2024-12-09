@@ -25,6 +25,13 @@ from vtkmodules.all import *
 
 def main():
     
+
+    reader=vtkJPEGReader()
+    reader.SetFileName("./Lesson_2/images/lena.jpg")
+
+    texture=vtkTexture()
+    texture.SetInputConnection(reader.GetOutputPort())
+
     planeSource = vtkPlaneSource()
    
     planeMapper = vtkPolyDataMapper()
@@ -33,6 +40,7 @@ def main():
   
     planeActor = vtkActor()
     planeActor.SetMapper(planeMapper)
+    planeActor.SetTexture(texture)
     
     ren = vtkRenderer()
     ren.AddActor( planeActor )
