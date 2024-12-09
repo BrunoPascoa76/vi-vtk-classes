@@ -73,12 +73,10 @@ def main():
     renWin.SetSize(600, 300)
     renWin.SetWindowName('Cone')
 
-    
-    
-    iren = vtkRenderWindowInteractor()
-    iren.SetRenderWindow(renWin)
-    iren.Initialize()
-    iren.Start()
+    for _ in range(0,360):
+        renWin.Render()
+        coneActor.RotateY(1)
+        coneActor2.RotateY(1)
 
 
 if __name__ == '__main__':
