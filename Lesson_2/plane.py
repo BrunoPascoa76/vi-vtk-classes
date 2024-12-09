@@ -23,31 +23,34 @@ from vtkmodules.all import *
 #     vtkRenderer
 # )
 
-def main():
+def make_plane(source,renderer,translation,texture_location):
+    transform=vtkTransform()
+    transform.Translate(translation)
+    transformFilter=vtkTransformPolyDataFilter()
+    transformFilter.SetInputConnection(source.GetOutputPort())
+    transformFilter.SetTransform(transform)
     
+    planeMapper = vtkPolyDataMapper()
+    planeMapper.SetInputConnection( transformFilter.GetOutputPort() )
+    planeActor = vtkActor()
+    planeActor.SetMapper(planeMapper)
 
     reader=vtkJPEGReader()
-    reader.SetFileName("./Lesson_2/images/lena.jpg")
+    reader.SetFileName(texture_location)
 
     texture=vtkTexture()
     texture.SetInputConnection(reader.GetOutputPort())
-
-    planeSource = vtkPlaneSource()
-    planeSource.SetOrigin(0,0,0)
-    planeSource.SetPoint1(2,0,0) #bottom right corner
-    planeSource.SetPoint2(0,1,0) #top left corner
-
-    planeMapper = vtkPolyDataMapper()
-    planeMapper.SetInputConnection( planeSource.GetOutputPort() )
-    
-  
-    planeActor = vtkActor()
-    planeActor.SetMapper(planeMapper)
     planeActor.SetTexture(texture)
-    
-    ren = vtkRenderer()
-    ren.AddActor( planeActor )
+
+    renderer.AddActor( planeActor )
+
+def main():
+    planeSource = vtkPlaneSource()
+
+    ren=vtkRenderer()
     ren.SetBackground(1.0, 0.55, 0.41)
+
+    make_plane(planeSource,ren,(0,0,0),"./Lesson_2/images/Im1.jpg")
    
     renWin = vtkRenderWindow()
     renWin.AddRenderer(ren)
