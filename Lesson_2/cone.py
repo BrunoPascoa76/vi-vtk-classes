@@ -23,6 +23,17 @@ from vtkmodules.all import *
 #     vtkRenderer
 # )
 
+class vtkMyCallback(object):
+    def __init__(self, renderer):
+        self.ren = renderer
+
+    def __call__(self, caller, ev):
+        # Just do this to demonstrate who called callback and the event that triggered it.
+        print(caller.GetClassName(), 'Event Id:', ev)
+        # Now print the camera position.
+        print("Camera Position: %f, %f, %f" % (self.ren.GetActiveCamera().GetPosition()[0],self.ren.GetActiveCamera().GetPosition()[1],self.ren.GetActiveCamera().GetPosition()[2]))
+# Callback for the interaction
+
 def main():
     
     sphereSource = vtkSphereSource()
@@ -82,10 +93,13 @@ def main():
     renWin.SetSize(600, 300)
     renWin.SetWindowName('Cone')
 
-    for _ in range(0,360):
-        renWin.Render()
-        sphereActor.RotateY(1)
-        sphereActor2.RotateY(1)
+    mo1 = vtkMyCallback(ren)
+    ren.AddObserver(vtkCommand.AnyEvent,mo1)
+
+    iren = vtkRenderWindowInteractor()
+    iren.SetRenderWindow(renWin)
+    iren.Initialize()
+    iren.Start()
 
 
 if __name__ == '__main__':
