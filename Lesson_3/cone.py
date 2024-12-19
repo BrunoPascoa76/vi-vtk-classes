@@ -32,6 +32,15 @@ def main():
     
     coneSource = vtkConeSource()
     sphereSource = vtkSphereSource()
+    sphereSource.SetRadius(1.0)
+    coneSource.SetHeight(0.4)  
+    coneSource.SetRadius(0.2)
+
+    sphereSource.SetThetaResolution(20)
+    sphereSource.SetPhiResolution(20)
+
+    sphereMapper = vtkPolyDataMapper()
+    sphereMapper.SetInputConnection( sphereSource.GetOutputPort() )
     
     # We create an instance of vtkPolyDataMapper to map the polygonal data
     # into graphics primitives. We connect the output of the cone source 
@@ -39,6 +48,10 @@ def main():
     glyph = vtkGlyph3D()
     glyph.SetSourceConnection(coneSource.GetOutputPort())
     glyph.SetInputConnection(sphereSource.GetOutputPort())
+
+
+    glyph.SetVectorModeToUseNormal()
+    glyph.SetScaleFactor(1)
 
 
     glyphMapper=vtkPolyDataMapper()
@@ -53,12 +66,16 @@ def main():
     glyphActor = vtkActor()
     glyphActor.SetMapper(glyphMapper)
 
+    sphereActor = vtkActor()
+    sphereActor.SetMapper(sphereMapper)
+
     # Create the Renderer and assign actors to it. A renderer is like a
     # viewport. It is part or all of a window on the screen and it is
     # responsible for drawing the actors it has.  We also set the background
     # color here.
     ren = vtkRenderer()
     ren.AddActor( glyphActor )
+    ren.AddActor( sphereActor )
     ren.SetBackground(1.0, 0.55, 0.41)
     
     # Finally we create the render window which will show up on the screen.
