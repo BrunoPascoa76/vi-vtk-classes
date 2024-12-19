@@ -36,8 +36,6 @@ def main():
     coneSource.SetHeight(0.4)  
     coneSource.SetRadius(0.2)
 
-    sphereSource.SetThetaResolution(20)
-    sphereSource.SetPhiResolution(20)
 
     sphereMapper = vtkPolyDataMapper()
     sphereMapper.SetInputConnection( sphereSource.GetOutputPort() )
