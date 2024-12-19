@@ -23,6 +23,19 @@ from vtkmodules.all import *
 #     vtkRenderer
 # )
 
+class vtkMyCallback(object):
+    def __init__(self, renderer,actor):
+        self.actor=actor
+        self.ren = renderer
+
+    def __call__(self, caller, ev):
+        # Just do this to demonstrate who called callback and the event that triggered it.
+        print(caller.GetClassName(), 'Event Id:', ev)
+        # Now print the camera position.
+        print("Camera Position: %f, %f, %f" % (self.ren.GetActiveCamera().GetPosition()[0],self.ren.GetActiveCamera().GetPosition()[1],self.ren.GetActiveCamera().GetPosition()[2]))
+        self.actor.SetPosition(self.ren.GetActiveCamera().GetPosition())
+# Callback for the interaction
+
 def main():
 
     # We Create an instance of vtkConeSource and set some of its
@@ -35,6 +48,14 @@ def main():
     sphereSource.SetRadius(1.0)
     coneSource.SetHeight(0.4)  
     coneSource.SetRadius(0.2)
+
+    pointSource=vtkSphereSource()
+    pointSource.SetRadius(0.05)
+    pointMapper=vtkPolyDataMapper()
+    pointMapper.SetInputConnection(pointSource.GetOutputPort())
+    pointActor=vtkActor()
+    pointActor.SetMapper(pointMapper)
+
 
 
     sphereMapper = vtkPolyDataMapper()
@@ -72,8 +93,8 @@ def main():
     # responsible for drawing the actors it has.  We also set the background
     # color here.
     ren = vtkRenderer()
-    ren.AddActor( glyphActor )
-    ren.AddActor( sphereActor )
+
+    ren.AddActor( pointActor )
     ren.SetBackground(1.0, 0.55, 0.41)
     
     # Finally we create the render window which will show up on the screen.
@@ -91,6 +112,21 @@ def main():
     # enable user interaction (e.g. to rotate the scene)
     iren = vtkRenderWindowInteractor()
     iren.SetRenderWindow(renWin)
+    myPicker = vtkPointPicker()
+    iren.SetPicker(myPicker)
+    
+    mo1 = vtkMyCallback(ren,pointActor)  # Pass the renderer, not the picker
+    myPicker.AddObserver(vtkCommand.EndPickEvent ,mo1)
+
+    
+    # Create and set up the picker before starting the interactor
+    
+
+    # Create the callback
+
+    # Associate the callback with the interactor, not the picker
+    iren.AddObserver(vtkCommand.LeftButtonPressEvent, mo1)
+
     iren.Initialize()
     iren.Start()
 
